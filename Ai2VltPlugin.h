@@ -21,8 +21,6 @@ Plugin* AllocatePlugin(SPPluginRef pluginRef);
 */
 void FixupReload(Plugin* plugin);
 
-/**	Provides a plugin which demonstrates adding new file formats to open and save to.
-*/
 class Ai2VltPlugin final : public Plugin
 {
 public:
@@ -62,16 +60,7 @@ private:
 	*/
 	virtual ASErr GoFileFormat(AIFileFormatMessage* message);
 
-	/**	Adds the menu items for this plugin to the application UI.
-	@param message IN pointer to plugin and call information.
-	@return kNoErr on success, other ASErr otherwise.
-	*/
 	ASErr AddMenus(SPInterfaceMessage* message);
-
-	/**	Adds the file formats for this plugin to the application.
-	@param message IN pointer to plugin and call information.
-	@return kNoErr on success, other ASErr otherwise.
-	*/
 	ASErr AddFileFormats(SPInterfaceMessage* message);
 
 private:

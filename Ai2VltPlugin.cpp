@@ -2,15 +2,7 @@
 #include "Ai2VltExporter.h"
 #include "Ai2VltPlugin.h"
 
-#ifdef MAC_ENV
-    #include <ApplicationServices/ApplicationServices.h>
-#endif
-
-#ifdef WIN_ENV
-	#include "shellapi.h"
-#endif 
-
-static void CStrToPStr(char *s, ai::UnicodeString::size_type len);
+static void stringToPascal(char *s, ai::UnicodeString::size_type len);
 
 
 Plugin* AllocatePlugin(SPPluginRef pluginRef)
@@ -76,7 +68,7 @@ ASErr Ai2VltPlugin::GoMenuItem(AIMenuMessage* message)
 	{
 		SDKAboutPluginsHelper aboutPluginsHelper;
 		aboutPluginsHelper.PopAboutBox(message, "Ai->Violet Export Plug-In", "Developed for the Violet engine of Building Forge, LLC");
-	}	
+	}
 	return kNoErr;
 }
 
@@ -94,14 +86,14 @@ ASErr Ai2VltPlugin::AddMenus(SPInterfaceMessage* message)
 ASErr Ai2VltPlugin::AddFileFormats(SPInterfaceMessage* message) 
 {
 	PlatformAddFileFormatData affd;
-	char pstrCanvas[kMaxStringLength] = "Violet";
+	char pstrCanvas[kMaxStringLength] = "Violet SVG";
 	
-	CStrToPStr(pstrCanvas, kMaxStringLength);
+	stringToPascal(pstrCanvas, kMaxStringLength);
 	affd.title = (unsigned char*)pstrCanvas;
 	affd.titleOrder = 0;
 	affd.extension = "vsvg";
 	
-	return sAIFileFormat->AddFileFormat(message->d.self, "Violet",
+	return sAIFileFormat->AddFileFormat(message->d.self, "Violet SVG",
 		&affd, kFileFormatExport,
 		&this->m_fileFormat, kNoExtendedOptions);
 }
@@ -117,7 +109,7 @@ ASErr Ai2VltPlugin::GoFileFormat(AIFileFormatMessage* message)
 	return kNoErr;
 }
 
-void CStrToPStr(char *s, ai::UnicodeString::size_type len)
+void stringToPascal(char *s, ai::UnicodeString::size_type len)
 {
 	const ai::UnicodeString sAsUnicode((const char*)s);
 	ai::PStr sAsPStr((unsigned char*) s);

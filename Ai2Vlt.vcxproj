@@ -146,6 +146,7 @@
       <ImportLibrary>./Ai2Vlt.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalDependencies>Ai2Vltc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -200,6 +201,7 @@
       <ImportLibrary>./Ai2Vlt.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalDependencies>Ai2Vltc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -254,6 +256,7 @@
       <ImportLibrary>./Ai2Vlt.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalDependencies>Ai2Vltc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -308,6 +311,7 @@
       <ImportLibrary>./Ai2Vlt.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalDependencies>Ai2Vltc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -317,6 +321,10 @@
     <ClInclude Include="Ai2VltExporter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\illustratorapi\illustrator\IAIArtboards.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Ai2VltPlugin.cpp" />
     <ClCompile Include="Ai2VltSuites.cpp" />
     <ClCompile Include="Ai2VltExporter.cpp" />

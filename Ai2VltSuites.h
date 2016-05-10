@@ -5,6 +5,7 @@
 #include "Suites.hpp"
 #include "ATETextSuitesImportHelper.h"
 
+#include "AIArtboard.h"
 #include "AIColorConversion.h"
 #include "AIATEPaint.h"
 #include "AIATETextUtil.h"
@@ -25,6 +26,7 @@ extern	"C" AIPathSuite*			sAIPath;
 extern	"C" AIMatchingArtSuite*		sAIMatchingArt;
 extern	"C" AIMdMemorySuite*		sAIMdMemory;
 
+extern "C" AIArtboardSuite *sAIArtboard;
 extern "C" AIATEPaintSuite *sATEPaint;
 extern "C" AIFontSuite *sAIFont;
 extern "C" AIATETextUtilSuite *sATETextUtil;
