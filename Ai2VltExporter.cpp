@@ -187,12 +187,13 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 		{
 			ai::UnicodeString symbolName;
 			sAISymbol->GetSymbolPatternName(symbolHandle, symbolName);
-			ezxml_set_attr_d(symbol, "xlink:href", symbolName.as_Platform().c_str());
+			char buf[64];
+			sprintf(buf, "#%s", symbolName.as_Platform().c_str());
+			ezxml_set_attr_d(symbol, "xlink:href", buf);
 
 
 			AIRealRect artBounds;
 			sAIArt->GetArtBounds(artHandle, &artBounds);
-			char buf[16];
 			sprintf(buf, "%.0f", artBounds.left);
 			ezxml_set_attr_d(symbol, "x", buf);
 			sprintf(buf, "%.0f", artBounds.bottom);
