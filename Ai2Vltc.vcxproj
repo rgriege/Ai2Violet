@@ -18,6 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ezxml\ezxml.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ezxml\ezxml.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8EA5DD4A-BA8C-4BFA-9A3B-84EF2B34237D}</ProjectGuid>
     <RootNamespace>Ai2Vltcvcsproj</RootNamespace>
@@ -133,12 +139,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="ezxml.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ezxml.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,0 +1,3 @@
+[submodule "ezxml"]
+	path = ezxml
+	url = https://github.com/rgriege/ezxml.git

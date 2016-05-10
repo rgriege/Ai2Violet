@@ -3,7 +3,7 @@
 #include "IllustratorSDK.h"
 #include "Ai2VltExporter.h"
 #include "Ai2VltSuites.h"
-#include "ezxml.h"
+#include "ezxml/ezxml.h"
 
 static bool isShape(AIArtHandle art, const char * shapeName)
 {
