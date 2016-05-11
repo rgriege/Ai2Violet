@@ -3,6 +3,8 @@
 #include "AppContext.hpp"
 #include "SDKErrors.h"
 #include "Plugin.hpp"
+#include "Utility.h"
+#include "ezxml/ezxml.h"
 
 #define AI2VLT_UI_EXTENSION				"com.bf.Ai2VltUi"
 #define ILST_APPID						"ILST"
@@ -38,25 +40,44 @@ csxs::event::EventErrorCode Ai2VltPanelController::RemoveEventListeners()
 	return htmlPPLib.RemoveEventListener(EVENT_TYPE_PANEL_READY, PanelReadyFunc, this);
 }
 
+// Simple way to describe art types for debugging purposes
+static const char *g_artTypes[] =
+{
+	"kUnknownArt", "kGroupArt", "kPathArt", "kCompoundPathArt", "kTextArtUnsupported", "kTextPathArtUnsupported", "kTextRunArtUnsupported", "kPlacedArt", "kMysteryPathArt", "kRasterArt", "kPluginArt", "kMeshArt", "kTextFrameArt", "kSymbolArt", "kForeignArt", "kLegacyTextArt"
+};
+
+static void _process_art(AIArtHandle art, ezxml_t doc, size_t idx)
+{
+	ASBoolean isDefaultName;
+	ai::UnicodeString artName;
+	short type;
+	sAIArt->GetArtType(art, &type);
+	sAIArt->GetArtName(art, artName, &isDefaultName);
+	ezxml_t artNode = ezxml_add_child(doc, g_artTypes[type], idx);
+	ezxml_set_attr_d(artNode, "name", artName.as_Roman().c_str());
+
+	AIArtHandle child;
+	size_t childIdx = 0;
+	sAIArt->GetArtFirstChild(art, &child);
+	while (child)
+	{
+		_process_art(child, artNode, childIdx);
+		sAIArt->GetArtSibling(child, &child);
+	}
+}
+
 void Ai2VltPanelController::ArtSelectionChanged()
 {
 	ai::int32 artCount = 0;
 	AIArtHandle **artStore = NULL;
 	AIMatchingArtSpec spec;
 	spec.type = kAnyArt;
-	spec.whichAttr = kArtSelected;
-	spec.attr = kArtSelected;
+	spec.whichAttr = kArtFullySelected;
+	spec.attr = kArtFullySelected;
 	sAIMatchingArt->GetMatchingArt(&spec, 1, &artStore, &artCount);
-	if (artCount >= 1 && artStore)
+	if (artCount == 1)
 	{
-		AIArtHandle art = (*artStore)[artCount - 1];
-		AIArtHandle child = art;
-		while (child)
-		{
-			art = child;
-			sAIArt->GetArtFirstChild(art, &child);
-		}
-
+		AIArtHandle art = (*artStore)[0];
 		SetArt(art);
 		sAIMdMemory->MdMemoryDisposeHandle((void**)artStore);
 	}
@@ -76,6 +97,12 @@ void Ai2VltPanelController::SetArt(AIArtHandle art)
 
 		switch (type)
 		{
+		case kPathArt:
+			if (isShape(art, "Rectangle"))
+				DispatchUpdateEvent("Rect/Btn");
+			else
+				DispatchUpdateEvent("");
+			break;
 		case kTextFrameArt:
 			DispatchUpdateEvent("Text");
 			break;

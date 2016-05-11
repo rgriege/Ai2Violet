@@ -3,17 +3,8 @@
 #include "IllustratorSDK.h"
 #include "Ai2VltExporter.h"
 #include "Ai2VltSuites.h"
+#include "Utility.h"
 #include "ezxml/ezxml.h"
-
-static bool isShape(AIArtHandle art, const char * shapeName)
-{
-	// TODO(rgriege): be more thorough
-	AIBoolean isDefaultName;
-	ai::UnicodeString name;
-	sAIArt->GetArtName(art, name, &isDefaultName);
-	return name.as_Platform().find(shapeName) != std::string::npos;
-}
-
 
 static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol)
 {
