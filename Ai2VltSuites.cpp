@@ -14,6 +14,7 @@ extern "C"
 	AIMdMemorySuite*		sAIMdMemory = NULL;
 	EXTERN_TEXT_SUITES
 
+	AIMenuSuite *sAIMenu = NULL;
 	AIArtboardSuite *sAIArtboard = NULL;
 	AIPathStyleSuite *sAIPathStyle = NULL;
 	AIHardSoftSuite *sAIHardSoft = NULL;
@@ -55,6 +56,7 @@ ImportSuite gImportSuites[] =
 	kAIMatchingArtSuite, kAIMatchingArtVersion, &sAIMatchingArt,
 	kAIMdMemorySuite, kAIMdMemorySuiteVersion, &sAIMdMemory,
 
+	kAIMenuSuite, kAIMenuSuiteVersion, &sAIMenu,
 	kAIArtboardSuite, kAIArtboardSuiteVersion, &sAIArtboard,
 	kAIPathStyleSuite, kAIPathStyleVersion, &sAIPathStyle,
 	kAIHardSoftSuite, kAIHardSoftVersion, &sAIHardSoft,

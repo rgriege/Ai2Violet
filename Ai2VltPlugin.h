@@ -4,28 +4,23 @@
 #include "IllustratorSDK.h"
 #include "Plugin.hpp"
 #include "Ai2VltSuites.h"
+#include "Ai2VltPanelController.h"
 #include "SDKDef.h"
 #include "SDKAboutPluginsHelper.h"
 
-#define kMaxStringLength 256
-
-/**	Creates a new Ai2VltPlugin.
-	@param pluginRef IN unique reference to this plugin.
-	@return pointer to new Ai2VltPlugin.
-*/
 Plugin* AllocatePlugin(SPPluginRef pluginRef);
-
-/**	Reloads the Ai2VltPlugin class state when the plugin is 
-	reloaded by the application.
-	@param plugin IN pointer to plugin being reloaded.
-*/
 void FixupReload(Plugin* plugin);
+
+// TODO(rgriege): why is this necessary?
+class Ai2VltPanelController;
 
 class Ai2VltPlugin final : public Plugin
 {
 public:
 
 	Ai2VltPlugin(SPPluginRef pluginRef);
+	Ai2VltPlugin(const Ai2VltPlugin &) = delete;
+	Ai2VltPlugin & operator=(const Ai2VltPlugin &) = delete;
 	virtual ~Ai2VltPlugin() = default;
 
 	/**	Restores state of Ai2VltPlugin during reload. */
@@ -33,32 +28,12 @@ public:
 
 private:
 
-	/** Calls Plugin::Message and handles any errors returned.
-		@param caller IN sender of the message.
-		@param selector IN nature of the message.
-		@param message IN pointer to plugin and call information.
-		@return kNoErr on success, other ASErr otherwise.
-	*/
-	virtual ASErr Message(char* caller, char* selector, void *message);
-
-	/**	Calls Plugin::Startup and initialisation functions, such as 
-		AddMenus and AddNotifiers.
-		@param message IN pointer to plugin and call information.
-		@return kNoErr on success, other ASErr otherwise.
-	*/
-	virtual ASErr StartupPlugin(SPInterfaceMessage* message);
-
-	/**	Performs actions required for menu item selected.
-		@param message IN pointer to plugin and call information.
-		@return kNoErr on success, other ASErr otherwise.
-	*/
-	virtual ASErr GoMenuItem(AIMenuMessage* message);
-	
-	/**	Performs actions required for file format selected.
-		@param message IN pointer to plugin and call information.
-		@return kNoErr on success, other ASErr otherwise.
-	*/
-	virtual ASErr GoFileFormat(AIFileFormatMessage* message);
+	virtual ASErr Message(char* caller, char* selector, void* message) override;
+	virtual ASErr Notify(AINotifierMessage* message) override;
+	virtual ASErr StartupPlugin(SPInterfaceMessage* message) override;
+	virtual ASErr ShutdownPlugin(SPInterfaceMessage* message) override;
+	virtual ASErr GoMenuItem(AIMenuMessage* message) override;
+	virtual ASErr GoFileFormat(AIFileFormatMessage* message) override;
 
 	ASErr AddMenus(SPInterfaceMessage* message);
 	ASErr AddFileFormats(SPInterfaceMessage* message);
@@ -66,7 +41,11 @@ private:
 private:
 
 	AIFileFormatHandle m_fileFormat;
-	AIMenuItemHandle m_aboutPluginMenu;
+	AIMenuItemHandle m_aboutMenu;
+	AIMenuItemHandle m_panelMenu;
+	std::unique_ptr<Ai2VltPanelController> m_panelController;
+	AINotifierHandle m_registerEventNotifier;
+	AINotifierHandle m_artSelectionChangedNotifier;
 };
 
 #endif

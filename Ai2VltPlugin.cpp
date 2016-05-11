@@ -1,6 +1,7 @@
 #include "IllustratorSDK.h"
 #include "Ai2VltExporter.h"
 #include "Ai2VltPlugin.h"
+#include "AICSXS.h"
 
 static void stringToPascal(char *s, ai::UnicodeString::size_type len);
 
@@ -17,7 +18,13 @@ void FixupReload(Plugin* plugin)
 
 
 Ai2VltPlugin::Ai2VltPlugin(SPPluginRef pluginRef) :
-	Plugin(pluginRef)
+	Plugin(pluginRef),
+	m_fileFormat(nullptr),
+	m_aboutMenu(nullptr),
+	m_panelMenu(nullptr),
+	m_panelController(nullptr),
+	m_registerEventNotifier(nullptr),
+	m_artSelectionChangedNotifier(nullptr)
 {
 	strncpy(fPluginName, "Ai2Vlt", kMaxStringLength);
 }
@@ -48,26 +55,56 @@ ASErr Ai2VltPlugin::Message(char* caller, char* selector, void *message)
 	return error;
 }
 
+ASErr Ai2VltPlugin::Notify(AINotifierMessage* message)
+{
+	if (message->notifier == m_registerEventNotifier)
+		m_panelController->RegisterCSXSEventListeners();
+	else if(message->notifier == m_artSelectionChangedNotifier)
+		m_panelController->ArtSelectionChanged();
+	return kNoErr;
+}
+
 ASErr Ai2VltPlugin::StartupPlugin(SPInterfaceMessage* message)
 {
 	ASErr error = kNoErr;
 	error = Plugin::StartupPlugin(message);
-    if (error)
-		return error;
+    if (error) return error;
+	m_panelController = std::make_unique<Ai2VltPanelController>();
 	error = this->AddMenus(message);
-	if (error)
-		return error;
+	if (error) return error;
 	error = this->AddFileFormats(message);
-	
+	if (error) return error;
+	// TODO(rgriege): use plugin name?
+	error = sAINotifier->AddNotifier(fPluginRef, "Register Event Notify", kAICSXSPlugPlugSetupCompleteNotifier, &m_registerEventNotifier);
+	if (error) return error;
+	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIArtSelectionChangedNotifier, &m_artSelectionChangedNotifier);
 	return error;
+}
+
+ASErr Ai2VltPlugin::ShutdownPlugin(SPInterfaceMessage* message)
+{
+	if (m_panelController != nullptr)
+	{
+		m_panelController->RemoveEventListeners();
+		m_panelController->SetArt(nullptr);
+		m_panelController.reset();
+		Plugin::LockPlugin(false);
+	}
+
+	message->d.globals = nullptr;
+	return Plugin::ShutdownPlugin(message);
 }
 
 ASErr Ai2VltPlugin::GoMenuItem(AIMenuMessage* message)
 {
-	if (message->menuItem == this->m_aboutPluginMenu)
+	if (message->menuItem == this->m_aboutMenu)
 	{
 		SDKAboutPluginsHelper aboutPluginsHelper;
 		aboutPluginsHelper.PopAboutBox(message, "Ai->Violet Export Plug-In", "Developed for the Violet engine of Building Forge, LLC");
+	}
+	else if (message->menuItem == this->m_panelMenu)
+	{
+		m_panelController->LoadExtension();
 	}
 	return kNoErr;
 }
@@ -75,12 +112,22 @@ ASErr Ai2VltPlugin::GoMenuItem(AIMenuMessage* message)
 
 ASErr Ai2VltPlugin::AddMenus(SPInterfaceMessage* message)
 {
+	ASErr error;
 	SDKAboutPluginsHelper aboutPluginsHelper;
-	return aboutPluginsHelper.AddAboutPluginsMenuItem(message, 
+	error = aboutPluginsHelper.AddAboutPluginsMenuItem(message, 
 		"AboutVioletPluginsGroupName", 
 		ai::UnicodeString("About Violet Plug-Ins"),
 		"Ai->Violet...", 
-		&this->m_aboutPluginMenu);
+		&this->m_aboutMenu);
+	if (error) return error;
+	
+	error = sAIMenu->AddMenuItemZString(message->d.self,
+		"Violet Menu Item",
+		kToolPalettesMenuGroup,
+		ZREF("Violet"),
+		kMenuItemWantsUpdateOption,
+		&m_panelMenu);
+	return error;
 }
 
 ASErr Ai2VltPlugin::AddFileFormats(SPInterfaceMessage* message) 

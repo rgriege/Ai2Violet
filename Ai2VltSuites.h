@@ -26,6 +26,7 @@ extern	"C" AIPathSuite*			sAIPath;
 extern	"C" AIMatchingArtSuite*		sAIMatchingArt;
 extern	"C" AIMdMemorySuite*		sAIMdMemory;
 
+extern "C" AIMenuSuite *sAIMenu;
 extern "C" AIArtboardSuite *sAIArtboard;
 extern "C" AIATEPaintSuite *sATEPaint;
 extern "C" AIFontSuite *sAIFont;
