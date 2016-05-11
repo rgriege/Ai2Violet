@@ -315,7 +315,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Ai2VltID.h" />
     <ClInclude Include="Ai2VltPlugin.h" />
     <ClInclude Include="Ai2VltSuites.h" />
     <ClInclude Include="Ai2VltExporter.h" />
