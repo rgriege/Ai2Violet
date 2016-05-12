@@ -27,13 +27,11 @@ public:
 	void ArtSelectionChanged();
 	void SetArt(AIArtHandle art);
 
+	void SelectHook(const char * hook);
+
 public:
 
 	const SPPluginRef m_pluginRef;
-
-private:
-
-	csxs::event::EventErrorCode DispatchUpdateEvent(const std::string & payload);
 
 private:
 
