@@ -10,20 +10,34 @@ class Ai2VltPanelController final : public HtmlUIController
 {
 public:
 
-	Ai2VltPanelController();
-	virtual ~Ai2VltPanelController() override = default;
+	explicit Ai2VltPanelController(SPPluginRef plugin);
+	Ai2VltPanelController(const Ai2VltPanelController &) = delete;
+	Ai2VltPanelController & operator=(const Ai2VltPanelController &) = delete;
+	virtual ~Ai2VltPanelController() override;
 
 	virtual csxs::event::EventErrorCode RegisterCSXSEventListeners() override;
 	virtual csxs::event::EventErrorCode RemoveEventListeners() override;
 	virtual ASErr SendData() override { return kNoErr; }
 	virtual void ParseData(const char *) override {}
 
+	void CurrentDocumentChanged();
+	void SendHooksToPanel();
+	void LoadHooks();
+
 	void ArtSelectionChanged();
 	void SetArt(AIArtHandle art);
 
+public:
+
+	const SPPluginRef m_pluginRef;
+
 private:
 
-	csxs::event::EventErrorCode DispatchUpdateEvent(const string& payload);
+	csxs::event::EventErrorCode DispatchUpdateEvent(const std::string & payload);
+
+private:
+
+	AIDictionaryRef m_docDictionary;
 };
 
 #endif

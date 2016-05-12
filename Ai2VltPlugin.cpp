@@ -58,9 +58,23 @@ ASErr Ai2VltPlugin::Message(char* caller, char* selector, void *message)
 ASErr Ai2VltPlugin::Notify(AINotifierMessage* message)
 {
 	if (message->notifier == m_registerEventNotifier)
+	{
 		m_panelController->RegisterCSXSEventListeners();
-	else if(message->notifier == m_artSelectionChangedNotifier)
+	}
+	else if (message->notifier == m_artSelectionChangedNotifier)
+	{
 		m_panelController->ArtSelectionChanged();
+	}
+	else if (message->notifier == m_documentChangedNotifier)
+	{
+		m_panelController->CurrentDocumentChanged();
+		m_panelController->ArtSelectionChanged();
+	}
+	else if (message->notifier == m_documentClosedNotifier)
+	{
+		m_panelController->CurrentDocumentChanged();
+		m_panelController->ArtSelectionChanged();
+	}
 	return kNoErr;
 }
 
@@ -69,7 +83,7 @@ ASErr Ai2VltPlugin::StartupPlugin(SPInterfaceMessage* message)
 	ASErr error = kNoErr;
 	error = Plugin::StartupPlugin(message);
     if (error) return error;
-	m_panelController = std::make_unique<Ai2VltPanelController>();
+	m_panelController = std::make_unique<Ai2VltPanelController>(fPluginRef);
 	error = this->AddMenus(message);
 	if (error) return error;
 	error = this->AddFileFormats(message);
@@ -78,6 +92,10 @@ ASErr Ai2VltPlugin::StartupPlugin(SPInterfaceMessage* message)
 	error = sAINotifier->AddNotifier(fPluginRef, "Register Event Notify", kAICSXSPlugPlugSetupCompleteNotifier, &m_registerEventNotifier);
 	if (error) return error;
 	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIArtSelectionChangedNotifier, &m_artSelectionChangedNotifier);
+	if (error) return error;
+	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIDocumentChangedNotifier, &m_documentChangedNotifier);
+	if (error) return error;
+	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIDocumentClosedNotifier, &m_documentClosedNotifier);
 	return error;
 }
 

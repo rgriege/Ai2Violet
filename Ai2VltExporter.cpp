@@ -263,7 +263,7 @@ static void exportDocument(ezxml_t doc)
 void Ai2Vlt::exportSvg(const char * filename)
 {
 	std::ofstream file;
-	file.open(filename, ios::out);
+	file.open(filename, std::ios::out);
 	if (file.is_open())
 	{
 		ezxml_t doc = ezxml_new("svg");

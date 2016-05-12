@@ -46,6 +46,8 @@ private:
 	std::unique_ptr<Ai2VltPanelController> m_panelController;
 	AINotifierHandle m_registerEventNotifier;
 	AINotifierHandle m_artSelectionChangedNotifier;
+	AINotifierHandle m_documentChangedNotifier;
+	AINotifierHandle m_documentClosedNotifier;
 };
 
 #endif
