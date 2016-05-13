@@ -6,8 +6,7 @@
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
-            <!-- Illustrator -->
-            <Host Name="ILST" Version="[19.0,19.9]" />
+			<Host Name="ILST" Version="[19.0,19.9]" />
 		</HostList>
 		<LocaleList>
 			<Locale Code="All" />
@@ -21,7 +20,6 @@
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./index.html</MainPath>
-				<ScriptPath>./jsx/hostscript.jsx</ScriptPath>
 				</Resources>
 				<Lifecycle>
 					<AutoVisible>true</AutoVisible>
@@ -34,22 +32,7 @@
 							<Height>300</Height>
 							<Width>300</Width>
 						</Size>
-                    <!--<MinSize>
-                            <Height>550</Height>
-                            <Width>400</Width>
-                        </MinSize>
-                        <MaxSize>
-                            <Height>550</Height>
-                            <Width>400</Width>
-                        </MaxSize>-->
 					</Geometry>
-					<Icons>
-						<Icon Type="Normal">./icons/iconNormal.png</Icon>
-						<Icon Type="RollOver">./icons/iconRollover.png</Icon>
-						<Icon Type="Disabled">./icons/iconDisabled.png</Icon>
-						<Icon Type="DarkNormal">./icons/iconDarkNormal.png</Icon>
-						<Icon Type="DarkRollOver">./icons/iconDarkRollover.png</Icon>
-					</Icons>					
 				</UI>
 			</DispatchInfo>
 		</Extension>
