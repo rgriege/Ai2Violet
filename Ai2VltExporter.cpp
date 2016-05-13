@@ -6,6 +6,52 @@
 #include "Utility.h"
 #include "ezxml/ezxml.h"
 
+#undef strcpy
+
+static void addHookData(ezxml_t node, AIArtHandle art)
+{
+	AIDictionaryRef dictionary;
+	sAIArt->GetDictionary(art, &dictionary);
+	AIDictKey key = sAIDictionary->Key("vltHook");
+	const char * hook = nullptr;
+	sAIDictionary->GetStringEntry(dictionary, key, &hook);
+
+	if (hook)
+		ezxml_set_attr_d(node, "hook", hook);
+
+	AIDictKey paramsKey = sAIDictionary->Key("vltParams");
+	AIDictionaryRef paramsDictionary = nullptr;
+	sAIDictionary->GetDictEntry(dictionary, paramsKey, &paramsDictionary);
+	if (paramsDictionary)
+	{
+		char paramsBuf[128];
+		char * paramsBufS = paramsBuf;
+		AIDictionaryIterator paramsIt;
+		sAIDictionary->Begin(paramsDictionary, &paramsIt);
+		while (!sAIDictionaryIterator->AtEnd(paramsIt))
+		{
+			AIDictKey paramKey = sAIDictionaryIterator->GetKey(paramsIt);
+			const char * value = nullptr;
+			sAIDictionary->GetStringEntry(paramsDictionary, paramKey, &value);
+
+			if (paramsBufS != paramsBuf)
+				*(paramsBufS++) = ' ';
+			strcpy(paramsBufS, sAIDictionary->GetKeyString(paramKey));
+			paramsBufS += strlen(sAIDictionary->GetKeyString(paramKey));
+			*(paramsBufS++) = ':';
+			strcpy(paramsBufS, value);
+			paramsBufS += strlen(value);
+
+			sAIDictionaryIterator->Next(paramsIt);
+		}
+		sAIDictionaryIterator->Release(paramsIt);
+		sAIDictionary->Release(paramsDictionary);
+		ezxml_set_attr_d(node, "params", paramsBuf);
+	}
+
+	sAIDictionary->Release(dictionary);
+}
+
 static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol)
 {
 	short type = 0;
@@ -35,7 +81,15 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 			sAIPathStyle->GetPathStyle(artHandle, &style);
 			if (!style.clip)
 			{
-				ezxml_t rect = ezxml_add_child(node, "rect", n);
+				AIDictionaryRef dictionary;
+				sAIArt->GetDictionary(artHandle, &dictionary);
+				AIDictKey key = sAIDictionary->Key("vltHook");
+				const char * hook = nullptr;
+				sAIDictionary->GetStringEntry(dictionary, key, &hook);
+				const char * childName = hook ? "btn" : "rect";
+				sAIDictionary->Release(dictionary);
+
+				ezxml_t child = ezxml_add_child(node, childName, n);
 				AIPathSegment segment;
 				AIRealRect artBounds;
 				sAIArt->GetArtBounds(artHandle, &artBounds);
@@ -43,25 +97,25 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				if (!insideSymbol)
 				{
 					sprintf(buf, "%.0f", artBounds.left);
-					ezxml_set_attr_d(rect, "x", buf);
+					ezxml_set_attr_d(child, "x", buf);
 					sprintf(buf, "%.0f", artBounds.bottom);
-					ezxml_set_attr_d(rect, "y", buf);
+					ezxml_set_attr_d(child, "y", buf);
 				}
 				else
 				{
 					AIRealRect maxBounds;
 					sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds);
 					sprintf(buf, "%.0f", artBounds.left - maxBounds.left);
-					ezxml_set_attr_d(rect, "x", buf);
+					ezxml_set_attr_d(child, "x", buf);
 					sprintf(buf, "%.0f", artBounds.bottom - maxBounds.top);
-					ezxml_set_attr_d(rect, "y", buf);
+					ezxml_set_attr_d(child, "y", buf);
 				}
 
 				sAIPath->GetPathSegments(artHandle, 3, 1, &segment);
 				sprintf(buf, "%.0f", artBounds.right - artBounds.left);
-				ezxml_set_attr_d(rect, "width", buf);
+				ezxml_set_attr_d(child, "width", buf);
 				sprintf(buf, "%.0f", artBounds.top - artBounds.bottom);
-				ezxml_set_attr_d(rect, "height", buf);
+				ezxml_set_attr_d(child, "height", buf);
 
 				if (style.fillPaint && style.fill.color.kind == kThreeColor)
 				{
@@ -69,7 +123,7 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 						(unsigned)(255 * style.fill.color.c.rgb.red),
 						(unsigned)(255 * style.fill.color.c.rgb.green),
 						(unsigned)(255 * style.fill.color.c.rgb.blue));
-					ezxml_set_attr_d(rect, "fill", buf);
+					ezxml_set_attr_d(child, "fill", buf);
 				}
 
 				if (style.strokePaint && style.stroke.color.kind == kThreeColor)
@@ -78,14 +132,16 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 						(unsigned)(255 * style.fill.color.c.rgb.red),
 						(unsigned)(255 * style.fill.color.c.rgb.green),
 						(unsigned)(255 * style.fill.color.c.rgb.blue));
-					ezxml_set_attr_d(rect, "stroke", buf);
+					ezxml_set_attr_d(child, "stroke", buf);
 
 					if ((unsigned)(style.stroke.miterLimit) != 1)
 					{
 						sprintf(buf, "%u", (unsigned)style.stroke.miterLimit);
-						ezxml_set_attr_d(rect, "stroke-miterlimit", buf);
+						ezxml_set_attr_d(child, "stroke-miterlimit", buf);
 					}
 				}
+
+				addHookData(child, artHandle);
 			}
 		}
 		else
@@ -167,6 +223,8 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				(unsigned)(255 * fontColor.c.rgb.blue));
 			ezxml_set_attr_d(text, "fill", buf);
 		}
+
+		addHookData(text, artHandle);
 		break;
 	}
 	case kSymbolArt:

@@ -28,6 +28,7 @@ public:
 	void SetArt(AIArtHandle art);
 
 	void SelectHook(const char * hook);
+	void SelectParam(const char * data);
 
 public:
 

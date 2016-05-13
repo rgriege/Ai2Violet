@@ -16,6 +16,7 @@
 #define EVENT_TYPE_PANEL_READY			"com.adobe.csxs.events.Ai2Vlt.PanelReady"
 #define EVENT_TYPE_LOAD_HOOKS			"com.adobe.csxs.events.Ai2Vlt.LoadHooks"
 #define EVENT_TYPE_SELECT_HOOK			"com.adobe.csxs.events.Ai2Vlt.SelectHook"
+#define EVENT_TYPE_SELECT_PARAM			"com.adobe.csxs.events.Ai2Vlt.SelectParam"
 
 // Events we dispatch
 #define EVENT_UPDATE_SELECTION			"com.adobe.csxs.events.Ai2Vlt.UpdateSelection"
@@ -60,8 +61,8 @@ static void PanelReadyFunc(const csxs::event::Event* const eventParam, void* con
 		return;
 
 	AppContext ctx(ai2vltPanelController->m_pluginRef);
-	ai2vltPanelController->ArtSelectionChanged();
 	ai2vltPanelController->SendHooksToPanel();
+	ai2vltPanelController->ArtSelectionChanged();
 }
 
 static void LoadHooksFunc(const csxs::event::Event* const eventParam, void* const context)
@@ -82,6 +83,16 @@ static void SelectHookFunc(const csxs::event::Event* const eventParam, void* con
 
 	AppContext ctx(ai2vltPanelController->m_pluginRef);
 	ai2vltPanelController->SelectHook(eventParam->data);
+}
+
+static void SelectParamFunc(const csxs::event::Event* const eventParam, void* const context)
+{
+	Ai2VltPanelController *ai2vltPanelController = (Ai2VltPanelController *)context;
+	if (ai2vltPanelController == nullptr || eventParam == nullptr)
+		return;
+
+	AppContext ctx(ai2vltPanelController->m_pluginRef);
+	ai2vltPanelController->SelectParam(eventParam->data);
 }
 
 Ai2VltPanelController::Ai2VltPanelController(SPPluginRef pluginRef) :
@@ -105,6 +116,8 @@ csxs::event::EventErrorCode Ai2VltPanelController::RegisterCSXSEventListeners()
 	result = htmlPPLib.AddEventListener(EVENT_TYPE_LOAD_HOOKS, LoadHooksFunc, this);
 	if (result != csxs::event::kEventErrorCode_Success) return result;
 	result = htmlPPLib.AddEventListener(EVENT_TYPE_SELECT_HOOK, SelectHookFunc, this);
+	if (result != csxs::event::kEventErrorCode_Success) return result;
+	result = htmlPPLib.AddEventListener(EVENT_TYPE_SELECT_PARAM, SelectParamFunc, this);
 	return result;
 }
 
@@ -116,6 +129,8 @@ csxs::event::EventErrorCode Ai2VltPanelController::RemoveEventListeners()
 	result = htmlPPLib.RemoveEventListener(EVENT_TYPE_LOAD_HOOKS, LoadHooksFunc, this);
 	if (result != csxs::event::kEventErrorCode_Success) return result;
 	result = htmlPPLib.RemoveEventListener(EVENT_TYPE_SELECT_HOOK, SelectHookFunc, this);
+	if (result != csxs::event::kEventErrorCode_Success) return result;
+	result = htmlPPLib.RemoveEventListener(EVENT_TYPE_SELECT_PARAM, SelectParamFunc, this);
 	return result;
 }
 
@@ -128,11 +143,11 @@ void Ai2VltPanelController::CurrentDocumentChanged()
 		if (m_docDictionary)
 			sAIDictionary->Release(m_docDictionary);
 		m_docDictionary = dictionary;
-		if (m_docDictionary)
-			sAIDictionary->AddRef(m_docDictionary);
 
 		SendHooksToPanel();
 	}
+	else
+		sAIDictionary->Release(dictionary);
 }
 
 void Ai2VltPanelController::SendHooksToPanel()
@@ -236,6 +251,8 @@ static const char * g_artTypeStrings[] = {
 void Ai2VltPanelController::SetArt(AIArtHandle art)
 {
 	Json::Value root{ Json::objectValue };
+	root["hook"] = "";
+	root["params"] = Json::objectValue;
 	VioletArtType type = VAT_None;
 	if (art != nullptr)
 	{
@@ -335,6 +352,50 @@ void Ai2VltPanelController::SelectHook(const char * hook)
 	sAIArt->GetDictionary(art, &dictionary);
 	AIDictKey key = sAIDictionary->Key("vltHook");
 	sAIDictionary->SetStringEntry(dictionary, key, hook);
+
+	// TODO(rgriege): don't always clear params
+	AIDictKey paramsKey = sAIDictionary->Key("vltParams");
+	sAIDictionary->DeleteEntry(dictionary, paramsKey);
+
+	sAIDictionary->Release(dictionary);
+	sAIMdMemory->MdMemoryDisposeHandle((void**)artStore);
+}
+
+void Ai2VltPanelController::SelectParam(const char * _data)
+{
+	std::string const data = _data;
+	const size_t delim = data.find(':');
+	std::string const param = data.substr(0, delim);
+	std::string const val = data.substr(delim + 1);
+
+	ai::int32 artCount = 0;
+	AIArtHandle **artStore = nullptr;
+	AIMatchingArtSpec spec;
+	spec.type = kAnyArt;
+	spec.whichAttr = kArtFullySelected;
+	spec.attr = kArtFullySelected;
+	sAIMatchingArt->GetMatchingArt(&spec, 1, &artStore, &artCount);
+	assert(artCount == 1);
+	AIArtHandle art = (*artStore)[0];
+
+	AIDictionaryRef dictionary;
+	sAIArt->GetDictionary(art, &dictionary);
+	AIDictKey key = sAIDictionary->Key("vltParams");
+
+	AIDictionaryRef paramsDictionary = nullptr;
+	sAIDictionary->GetDictEntry(dictionary, key, &paramsDictionary);
+	if (!paramsDictionary)
+	{
+		sAIDictionary->CreateDictionary(&paramsDictionary);
+		sAIDictionary->SetDictEntry(dictionary, key, paramsDictionary);
+	}
+
+	AIDictKey paramKey = sAIDictionary->Key(param.c_str());
+	if (val.empty())
+		sAIDictionary->DeleteEntry(paramsDictionary, paramKey);
+	else
+		sAIDictionary->SetStringEntry(paramsDictionary, paramKey, val.c_str());
+	sAIDictionary->Release(paramsDictionary);
 
 	sAIDictionary->Release(dictionary);
 	sAIMdMemory->MdMemoryDisposeHandle((void**)artStore);
