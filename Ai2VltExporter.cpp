@@ -52,7 +52,7 @@ static void addHookData(ezxml_t node, AIArtHandle art)
 	sAIDictionary->Release(dictionary);
 }
 
-static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol)
+static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol, AIRealPoint origin)
 {
 	short type = 0;
 	sAIArt->GetArtType(artHandle, &type);
@@ -68,7 +68,7 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 		size_t childIdx = 0;
 		while (childHandle)
 		{
-			exportArt(node, childHandle, childIdx++, insideSymbol);
+			exportArt(node, childHandle, childIdx++, insideSymbol, origin);
 			sAIArt->GetArtSibling(childHandle, &childHandle);
 		}
 		break;
@@ -96,18 +96,18 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				char buf[32];
 				if (!insideSymbol)
 				{
-					sprintf(buf, "%.0f", artBounds.left);
+					sprintf(buf, "%.0f", artBounds.left - origin.h);
 					ezxml_set_attr_d(child, "x", buf);
-					sprintf(buf, "%.0f", artBounds.bottom);
+					sprintf(buf, "%.0f", artBounds.bottom - origin.v);
 					ezxml_set_attr_d(child, "y", buf);
 				}
 				else
 				{
 					AIRealRect maxBounds;
 					sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds);
-					sprintf(buf, "%.0f", artBounds.left - maxBounds.left);
+					sprintf(buf, "%.0f", artBounds.left - maxBounds.left - origin.h);
 					ezxml_set_attr_d(child, "x", buf);
-					sprintf(buf, "%.0f", artBounds.bottom - maxBounds.top);
+					sprintf(buf, "%.0f", artBounds.bottom - maxBounds.top - origin.v);
 					ezxml_set_attr_d(child, "y", buf);
 				}
 
@@ -134,10 +134,10 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 						(unsigned)(255 * style.stroke.color.c.rgb.blue));
 					ezxml_set_attr_d(child, "stroke", buf);
 
-					if ((unsigned)(style.stroke.miterLimit) != 1)
+					if ((unsigned)(style.stroke.width) > 1)
 					{
-						sprintf(buf, "%u", (unsigned)style.stroke.miterLimit);
-						ezxml_set_attr_d(child, "stroke-miterlimit", buf);
+						sprintf(buf, "%u", (unsigned)style.stroke.width);
+						ezxml_set_attr_d(child, "stroke-width", buf);
 					}
 				}
 
@@ -164,10 +164,10 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 					sAIPath->GetPathSegments(artHandle, i, 1, &segment);
 					char label_buf[4];
 					sprintf(label_buf, "x%d", i);
-					sprintf(buf, "%.0f", segment.p.h - maxBounds.left);
+					sprintf(buf, "%.0f", segment.p.h - maxBounds.left - origin.v);
 					ezxml_set_attr_d(child, label_buf, buf);
 					sprintf(label_buf, "y%d", i);
-					sprintf(buf, "%.0f", segment.p.v - maxBounds.top);
+					sprintf(buf, "%.0f", segment.p.v - maxBounds.top - origin.h);
 					ezxml_set_attr_d(child, label_buf, buf);
 				}
 
@@ -179,10 +179,10 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 						(unsigned)(255 * style.stroke.color.c.rgb.blue));
 					ezxml_set_attr_d(child, "stroke", buf);
 
-					if ((unsigned)(style.stroke.miterLimit) != 1)
+					if ((unsigned)(style.stroke.width) > 1)
 					{
-						sprintf(buf, "%u", (unsigned)style.stroke.miterLimit);
-						ezxml_set_attr_d(child, "stroke-miterlimit", buf);
+						sprintf(buf, "%u", (unsigned)style.stroke.width);
+						ezxml_set_attr_d(child, "stroke-width", buf);
 					}
 				}
 			}
@@ -220,9 +220,9 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 
 		AIRealRect artBounds;
 		sAIArt->GetArtBounds(artHandle, &artBounds);
-		sprintf(buf, "%.0f", artBounds.left);
+		sprintf(buf, "%.0f", artBounds.left - origin.h);
 		ezxml_set_attr_d(text, "x", buf);
-		sprintf(buf, "%.0f", artBounds.bottom);
+		sprintf(buf, "%.0f", artBounds.bottom - origin.v);
 		ezxml_set_attr_d(text, "y", buf);
 
 		TextRangeRef textRange;
@@ -286,9 +286,9 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 
 			AIRealRect artBounds;
 			sAIArt->GetArtBounds(artHandle, &artBounds);
-			sprintf(buf, "%.0f", artBounds.left);
+			sprintf(buf, "%.0f", artBounds.left - origin.h);
 			ezxml_set_attr_d(symbol, "x", buf);
-			sprintf(buf, "%.0f", artBounds.bottom);
+			sprintf(buf, "%.0f", artBounds.bottom - origin.v);
 			ezxml_set_attr_d(symbol, "y", buf);
 		}
 		break;
@@ -334,7 +334,11 @@ static void exportDocument(ezxml_t doc)
 			AIArtHandle artHandle;
 			sAISymbol->GetSymbolPatternArt(symbolHandle, &artHandle);
 
-			exportArt(symbol, artHandle, 0, true);
+			AIRealRect artBounds, maxBounds;
+			sAIArt->GetArtBounds(artHandle, &artBounds);
+			sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds);
+
+			exportArt(symbol, artHandle, 0, true, AIRealPoint{ artBounds.left - maxBounds.left, artBounds.bottom - maxBounds.top });
 		}
 	}
 
@@ -356,7 +360,7 @@ static void exportDocument(ezxml_t doc)
 
 			AIArtHandle artHandle;
 			sAIArt->GetFirstArtOfLayer(layerHandle, &artHandle);
-			exportArt(layer, artHandle, 0, false);
+			exportArt(layer, artHandle, 0, false, AIRealPoint{ 0, 0 });
 		}
 	}
 }
