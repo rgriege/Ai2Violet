@@ -144,6 +144,49 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				addHookData(child, artHandle);
 			}
 		}
+		else if (isShape(artHandle, "Line"))
+		{
+			AIPathStyle style;
+			sAIPathStyle->GetPathStyle(artHandle, &style);
+			if (!style.clip)
+			{
+				ezxml_t child = ezxml_add_child(node, "line", n);
+				char buf[32];
+				AIRealRect maxBounds = { 0, 0, 0, 0 };
+				if (insideSymbol)
+					sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds);
+
+				ai::int16 segmentCount;
+				sAIPath->GetPathSegmentCount(artHandle, &segmentCount);
+				for (ai::int16 i = 0; i < segmentCount; ++i)
+				{
+					AIPathSegment segment;
+					sAIPath->GetPathSegments(artHandle, i, 1, &segment);
+					char label_buf[4];
+					sprintf(label_buf, "x%d", i);
+					sprintf(buf, "%.0f", segment.p.h - maxBounds.left);
+					ezxml_set_attr_d(child, label_buf, buf);
+					sprintf(label_buf, "y%d", i);
+					sprintf(buf, "%.0f", segment.p.v - maxBounds.top);
+					ezxml_set_attr_d(child, label_buf, buf);
+				}
+
+				if (style.strokePaint && style.stroke.color.kind == kThreeColor)
+				{
+					sprintf(buf, "#%.2x%.2x%.2x",
+						(unsigned)(255 * style.stroke.color.c.rgb.red),
+						(unsigned)(255 * style.stroke.color.c.rgb.green),
+						(unsigned)(255 * style.stroke.color.c.rgb.blue));
+					ezxml_set_attr_d(child, "stroke", buf);
+
+					if ((unsigned)(style.stroke.miterLimit) != 1)
+					{
+						sprintf(buf, "%u", (unsigned)style.stroke.miterLimit);
+						ezxml_set_attr_d(child, "stroke-miterlimit", buf);
+					}
+				}
+			}
+		}
 		else
 		{
 			AIBoolean isDefaultName;
