@@ -129,9 +129,9 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				if (style.strokePaint && style.stroke.color.kind == kThreeColor)
 				{
 					sprintf(buf, "#%.2x%.2x%.2x",
-						(unsigned)(255 * style.fill.color.c.rgb.red),
-						(unsigned)(255 * style.fill.color.c.rgb.green),
-						(unsigned)(255 * style.fill.color.c.rgb.blue));
+						(unsigned)(255 * style.stroke.color.c.rgb.red),
+						(unsigned)(255 * style.stroke.color.c.rgb.green),
+						(unsigned)(255 * style.stroke.color.c.rgb.blue));
 					ezxml_set_attr_d(child, "stroke", buf);
 
 					if ((unsigned)(style.stroke.miterLimit) != 1)
