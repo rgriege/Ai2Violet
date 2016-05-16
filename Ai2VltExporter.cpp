@@ -218,15 +218,17 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 		char buf[16];
 		ezxml_t text = ezxml_add_child(node, "text", n);
 
-		AIRealRect artBounds;
-		sAIArt->GetArtBounds(artHandle, &artBounds);
-		sprintf(buf, "%.0f", artBounds.left - origin.h);
-		ezxml_set_attr_d(text, "x", buf);
-		sprintf(buf, "%.0f", artBounds.bottom - origin.v);
-		ezxml_set_attr_d(text, "y", buf);
-
 		TextRangeRef textRange;
 		sAITextFrame->GetATETextRange(artHandle, &textRange);
+
+		AIRealRect bounds;
+		sATETextUtil->GetBoundsFromTextRange(textRange, &bounds);
+		sprintf(buf, "%.0f", bounds.left - origin.v);
+		ezxml_set_attr_d(text, "x", buf);
+		sprintf(buf, "%.0f", bounds.top - origin.h);
+		ezxml_set_attr_d(text, "y", buf);
+
+
 		ATE::ITextRange iTextRange(textRange);
 		ASInt32 strLength = iTextRange.GetSize();
 		if (strLength > 0)
