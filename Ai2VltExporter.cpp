@@ -300,7 +300,7 @@ static void exportDocument(ezxml_t doc)
 	for (ai::int32 i = 0; i < layerCount; ++i)
 	{
 		AILayerHandle layerHandle;
-		sAILayer->GetNthLayer(i, &layerHandle);
+		sAILayer->GetNthLayer(layerCount - i - 1, &layerHandle);
 		AIBoolean visible;
 		sAILayer->GetLayerVisible(layerHandle, &visible);
 		if (visible)
