@@ -269,8 +269,8 @@ static void exportDocument(ezxml_t doc)
 		sprintf(buf, "%d %d %d %d",
 			(int)bounds.bottom,
 			(int)bounds.left,
-			(int)bounds.top,
-			(int)bounds.right);
+			(int)bounds.right,
+			(int)bounds.top);
 		ezxml_set_attr_d(doc, "viewBox", buf);
 	}
 
