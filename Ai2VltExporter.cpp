@@ -292,6 +292,8 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 			ezxml_set_attr_d(symbol, "x", buf);
 			sprintf(buf, "%.0f", artBounds.bottom - origin.v);
 			ezxml_set_attr_d(symbol, "y", buf);
+
+			addHookData(symbol, artHandle);
 		}
 		break;
 	}
