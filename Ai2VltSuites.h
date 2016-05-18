@@ -3,56 +3,52 @@
 
 #include "IllustratorSDK.h"
 #include "Suites.hpp"
-#include "ATETextSuitesImportHelper.h"
 
+#include "AIArt.h"
 #include "AIArtboard.h"
-#include "AIColorConversion.h"
+#include "AIArtSet.h"
 #include "AIATEPaint.h"
 #include "AIATETextUtil.h"
+#include "AIColorConversion.h"
+#include "AIDataFilter.h"
+#include "AIDictionary.h"
+#include "AIDocumentList.h"
+#include "AIFont.h"
 #include "AIImageOptimization.h"
-#include "AISymbol.h"
-#include "AIArtStyleParser.h"
-#include "AIPattern.h"
+#include "AILayer.h"
+#include "AIMatchingArt.h"
+#include "AIPath.h"
 #include "AIPathStyle.h"
-#include "AIGradient.h"
+#include "AIRasterize.h"
+#include "AIRealMath.h"
+#include "AISymbol.h"
+#include "AITextFrame.h"
 
-extern	"C"	AIUnicodeStringSuite*	sAIUnicodeString;
-extern  "C" SPBlocksSuite*			sSPBlocks;
-extern	"C" AIFileFormatSuite*		sAIFileFormat;
-extern	"C" AIDocumentSuite*		sAIDocument;
-extern	"C" AITextFrameSuite*		sAITextFrame;
-extern	"C" AIArtSuite*				sAIArt;
-extern	"C" AIPathSuite*			sAIPath;
-extern	"C" AIMatchingArtSuite*		sAIMatchingArt;
-extern	"C" AIMdMemorySuite*		sAIMdMemory;
-
-extern "C" AIMenuSuite *sAIMenu;
-extern "C" AIArtboardSuite *sAIArtboard;
-extern "C" AIATEPaintSuite *sATEPaint;
-extern "C" AIFontSuite *sAIFont;
-extern "C" AIATETextUtilSuite *sATETextUtil;
-extern "C" AIDataFilterSuite *sAIDataFilter;
-extern "C" AISymbolSuite *sAISymbol;
-extern "C" AIPatternSuite *sAIPattern;
-extern "C" AIPlacedSuite *sAIPlaced;
-extern "C" AIRasterSuite *sAIRaster;
-extern "C" AIImageOptSuite *sAIImageOpt;
-extern "C" AIArtStyleSuite *sAIArtStyle;
-extern "C" AIArtStyleParserSuite *sAIArtStyleParser;
-extern "C" AILiveEffectSuite *sAILiveEffect;
-extern "C" AIDictionarySuite *sAIDictionary;
-extern "C" AIDictionaryIteratorSuite *sAIDictionaryIterator;
-extern "C" AIEntrySuite *sAIEntry;
-extern "C" AIPathStyleSuite *sAIPathStyle;
-extern "C" AIHardSoftSuite *sAIHardSoft;
-extern "C" AIRealMathSuite *sAIRealMath;
-extern "C" AIGradientSuite *sAIGradient;
-extern "C" AIMaskSuite *sAIMask;
-extern "C" AIPluginGroupSuite *sAIPluginGroup;
-extern "C" AICustomColorSuite *sAICustomColor;
-extern "C" AIColorConversionSuite *sAIColorConversion;
-extern "C" AIBlendStyleSuite *sAIBlendStyle;
-extern "C" AILayerSuite *sAILayer;
-extern "C" AIRealBezierSuite *sAIRealBezier;
+extern "C" AIUnicodeStringSuite*			sAIUnicodeString;
+extern "C" SPBlocksSuite*					sSPBlocks;
+extern "C" AIArtboardSuite*					sAIArtboard;
+extern "C" AIMenuSuite*						sAIMenu;
+extern "C" AIDataFilterSuite*				sAIDataFilter;
+extern "C" AIDocumentListSuite*				sAIDocumentList;
+extern "C" AIDocumentSuite*					sAIDocument;
+extern "C" AIArtSuite*						sAIArt;
+extern "C" AIDictionarySuite*				sAIDictionary;
+extern "C" AIArtSetSuite*					sAIArtSet;
+extern "C" AISymbolSuite*					sAISymbol;
+extern "C" AIRasterizeSuite*				sAIRasterize;
+extern "C" AILayerSuite*					sAILayer;
+extern "C" AIPathStyleSuite*				sAIPathStyle;
+extern "C" AIMatchingArtSuite*				sAIMatchingArt;
+extern "C" AITextFrameSuite*				sAITextFrame;
+extern "C" AIColorConversionSuite*			sAIColorConversion;
+extern "C" AIFontSuite*						sAIFont;
+extern "C" AIPathSuite*						sAIPath;
+extern "C" AIATETextUtilSuite*				sATETextUtil;
+extern "C" AIDictionaryIteratorSuite*		sAIDictionaryIterator;
+extern "C" AIFileFormatSuite*				sAIFileFormat;
+extern "C" AIMdMemorySuite*					sAIMdMemory;
+extern "C" AIATEPaintSuite*					sATEPaint;
+extern "C" AIImageOptSuite*					sAIImageOpt;
+extern "C" AIRealMathSuite*					sAIRealMath;
 
 #endif

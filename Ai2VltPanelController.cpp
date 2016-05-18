@@ -262,7 +262,7 @@ void Ai2VltPanelController::SetArt(AIArtHandle art)
 		switch (aiType)
 		{
 		case kPathArt:
-			if (isShape(art, "Rectangle"))
+			if (Ai2Vlt::isShape(art, "Rectangle"))
 				type = VAT_Btn;
 			break;
 		case kTextFrameArt:

@@ -1,89 +1,66 @@
 #include "IllustratorSDK.h"
 #include "Ai2VltSuites.h"
+#include "ATETextSuitesImportHelper.h"
 
 extern "C"
 {
-	AIUnicodeStringSuite*	sAIUnicodeString = NULL;
-	SPBlocksSuite*			sSPBlocks = NULL;
-	AIFileFormatSuite*		sAIFileFormat = NULL;
-	AIDocumentSuite*		sAIDocument = NULL;
-	AITextFrameSuite*		sAITextFrame = NULL;
-	AIArtSuite*				sAIArt = NULL;
-	AIPathSuite*			sAIPath = NULL;
-	AIMatchingArtSuite*		sAIMatchingArt = NULL;
-	AIMdMemorySuite*		sAIMdMemory = NULL;
+	AIUnicodeStringSuite*				sAIUnicodeString = NULL;
+	SPBlocksSuite*						sSPBlocks = NULL;
+	AIArtboardSuite*					sAIArtboard = NULL;
+	AIMenuSuite*						sAIMenu = NULL;
+	AIDataFilterSuite*					sAIDataFilter = NULL;
+	AIDocumentListSuite*				sAIDocumentList = NULL;
+	AIDocumentSuite*					sAIDocument = NULL;
+	AIArtSuite*							sAIArt = NULL;
+	AIDictionarySuite*					sAIDictionary = NULL;
+	AIArtSetSuite*						sAIArtSet = NULL;
+	AISymbolSuite*						sAISymbol = NULL;
+	AIRasterizeSuite*					sAIRasterize = NULL;
+	AILayerSuite*						sAILayer = NULL;
+	AIPathStyleSuite*					sAIPathStyle = NULL;
+	AIMatchingArtSuite*					sAIMatchingArt = NULL;
+	AITextFrameSuite*					sAITextFrame = NULL;
+	AIColorConversionSuite*				sAIColorConversion = NULL;
+	AIFontSuite*						sAIFont = NULL;
+	AIPathSuite*						sAIPath = NULL;
+	AIATETextUtilSuite*					sATETextUtil = NULL;
+	AIDictionaryIteratorSuite*			sAIDictionaryIterator = NULL;
+	AIFileFormatSuite*					sAIFileFormat = NULL;
+	AIMdMemorySuite*					sAIMdMemory = NULL;
+	AIATEPaintSuite*					sATEPaint = NULL;
+	AIImageOptSuite*					sAIImageOpt = NULL;
+	AIRealMathSuite*					sAIRealMath = NULL;
 	EXTERN_TEXT_SUITES
-
-	AIMenuSuite *sAIMenu = NULL;
-	AIArtboardSuite *sAIArtboard = NULL;
-	AIPathStyleSuite *sAIPathStyle = NULL;
-	AIHardSoftSuite *sAIHardSoft = NULL;
-	AIRealMathSuite *sAIRealMath = NULL;
-	AIGradientSuite *sAIGradient = NULL;
-	AIMaskSuite *sAIMask = NULL;
-	AIPluginGroupSuite *sAIPluginGroup = NULL;
-	AICustomColorSuite *sAICustomColor = NULL;
-	AIColorConversionSuite *sAIColorConversion = NULL;
-	AIBlendStyleSuite *sAIBlendStyle = NULL;
-	AILayerSuite *sAILayer = NULL;
-	AIATEPaintSuite *sATEPaint = NULL;
-	AIFontSuite *sAIFont = NULL;
-	AIATETextUtilSuite *sATETextUtil = NULL;
-	AIDataFilterSuite *sAIDataFilter = NULL;
-	AISymbolSuite *sAISymbol = NULL;
-	AIPatternSuite *sAIPattern = NULL;
-	AIPlacedSuite *sAIPlaced = NULL;
-	AIRasterSuite *sAIRaster = NULL;
-	AIImageOptSuite *sAIImageOpt = NULL;
-	AIArtStyleSuite *sAIArtStyle = NULL;
-	AIArtStyleParserSuite *sAIArtStyleParser = NULL;
-	AILiveEffectSuite *sAILiveEffect = NULL;
-	AIDictionarySuite *sAIDictionary = NULL;
-	AIDictionaryIteratorSuite *sAIDictionaryIterator = NULL;
-	AIEntrySuite *sAIEntry = NULL;
-	AIRealBezierSuite *sAIRealBezier = NULL;
 };
 
 ImportSuite gImportSuites[] = 
 {
 	kAIUnicodeStringSuite, kAIUnicodeStringSuiteVersion, &sAIUnicodeString,
-	kSPBlocksSuite, kSPBlocksSuiteVersion, &sSPBlocks,
-	kAIFileFormatSuite, kAIFileFormatVersion, &sAIFileFormat,
-	kAIDocumentSuite, kAIDocumentVersion, &sAIDocument,
-	kAITextFrameSuite, kAITextFrameVersion, &sAITextFrame,
-	kAIArtSuite, kAIArtSuiteVersion, &sAIArt,
-	kAIPathSuite, kAIPathVersion, &sAIPath,
-	kAIMatchingArtSuite, kAIMatchingArtVersion, &sAIMatchingArt,
-	kAIMdMemorySuite, kAIMdMemorySuiteVersion, &sAIMdMemory,
-
-	kAIMenuSuite, kAIMenuSuiteVersion, &sAIMenu,
 	kAIArtboardSuite, kAIArtboardSuiteVersion, &sAIArtboard,
-	kAIPathStyleSuite, kAIPathStyleVersion, &sAIPathStyle,
-	kAIHardSoftSuite, kAIHardSoftVersion, &sAIHardSoft,
-	kAIRealMathSuite, kAIRealMathVersion, &sAIRealMath,
-	kAIGradientSuite, kAIGradientVersion, &sAIGradient,
-	kAIMaskSuite, kAIMaskVersion, &sAIMask,
-	kAIPluginGroupSuite, kAIPluginGroupVersion, &sAIPluginGroup,
-	kAICustomColorSuite, kAICustomColorVersion, &sAICustomColor,
-	kAIColorConversionSuite, kAIColorConversionVersion, &sAIColorConversion,
-	kAIBlendStyleSuite, kAIBlendStyleVersion, &sAIBlendStyle,
-	kAILayerSuite, kAILayerVersion, &sAILayer,
-	kAIATEPaintSuite, kAIATEPaintSuiteVersion, &sATEPaint,
-	kAIFontSuite, kAIFontSuiteVersion, &sAIFont,
-	kAIATETextUtilSuite, kAIATETextUtilSuiteVersion, &sATETextUtil,
+	kSPBlocksSuite, kSPBlocksSuiteVersion, &sSPBlocks,
+	kAIMenuSuite, kAIMenuSuiteVersion, &sAIMenu,
 	kAIDataFilterSuite, kAIDataFilterSuiteVersion, &sAIDataFilter,
-	kAISymbolSuite, kAISymbolSuiteVersion, &sAISymbol,
-	kAIPatternSuite, kAIPatternSuiteVersion, &sAIPattern,
-	kAIPlacedSuite, kAIPlacedSuiteVersion, &sAIPlaced,
-	kAIRasterSuite, kAIRasterSuiteVersion, &sAIRaster,
-	kAIArtStyleSuite, kAIArtStyleSuiteVersion, &sAIArtStyle,
-    kAIArtStyleParserSuite, kAIArtStyleParserSuiteVersion, &sAIArtStyleParser,
-	kAILiveEffectSuite, kAILiveEffectSuiteVersion, &sAILiveEffect,
+	kAIDocumentListSuite, kAIDocumentListSuiteVersion, &sAIDocumentList,
+	kAIDocumentSuite, kAIDocumentSuiteVersion, &sAIDocument,
+	kAIArtSuite, kAIArtSuiteVersion, &sAIArt,
 	kAIDictionarySuite, kAIDictionarySuiteVersion, &sAIDictionary,
+	kAIArtSetSuite, kAIArtSetSuiteVersion, &sAIArtSet,
+	kAISymbolSuite, kAISymbolSuiteVersion, &sAISymbol,
+	kAIRasterizeSuite, kAIRasterizeSuiteVersion, &sAIRasterize,
+	kAILayerSuite, kAILayerSuiteVersion, &sAILayer,
+	kAIPathStyleSuite, kAIPathStyleSuiteVersion, &sAIPathStyle,
+	kAIMatchingArtSuite, kAIMatchingArtSuiteVersion, &sAIMatchingArt,
+	kAITextFrameSuite, kAITextFrameSuiteVersion, &sAITextFrame,
+	kAIColorConversionSuite, kAIColorConversionSuiteVersion, &sAIColorConversion,
+	kAIFontSuite, kAIFontSuiteVersion, &sAIFont,
+	kAIPathSuite, kAIPathSuiteVersion, &sAIPath,
+	kAIATETextUtilSuite, kAIATETextUtilSuiteVersion, &sATETextUtil,
 	kAIDictionaryIteratorSuite, kAIDictionaryIteratorSuiteVersion, &sAIDictionaryIterator,
-	kAIEntrySuite, kAIEntrySuiteVersion, &sAIEntry,
+	kAIFileFormatSuite, kAIFileFormatSuiteVersion, &sAIFileFormat,
+	kAIMdMemorySuite, kAIMdMemorySuiteVersion, &sAIMdMemory,
+	kAIATEPaintSuite, kAIATEPaintSuiteVersion, &sATEPaint,
 	kAIImageOptSuite, kAIImageOptSuiteVersion, &sAIImageOpt,
-	kAIRealBezierSuite, kAIRealBezierSuiteVersion, &sAIRealBezier,
+	kAIRealMathSuite, kAIRealMathSuiteVersion, &sAIRealMath,
 
 	IMPORT_TEXT_SUITES
 	nil, 0, nil
