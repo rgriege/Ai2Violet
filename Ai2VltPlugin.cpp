@@ -83,19 +83,35 @@ ASErr Ai2VltPlugin::StartupPlugin(SPInterfaceMessage* message)
 	ASErr error = kNoErr;
 	error = Plugin::StartupPlugin(message);
     if (error) return error;
-	m_panelController = std::make_unique<Ai2VltPanelController>(fPluginRef);
 	error = this->AddMenus(message);
 	if (error) return error;
 	error = this->AddFileFormats(message);
 	if (error) return error;
-	// TODO(rgriege): use plugin name?
-	error = sAINotifier->AddNotifier(fPluginRef, "Register Event Notify", kAICSXSPlugPlugSetupCompleteNotifier, &m_registerEventNotifier);
+	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAICSXSPlugPlugSetupCompleteNotifier, &m_registerEventNotifier);
 	if (error) return error;
 	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIArtSelectionChangedNotifier, &m_artSelectionChangedNotifier);
 	if (error) return error;
 	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIDocumentChangedNotifier, &m_documentChangedNotifier);
 	if (error) return error;
 	error = sAINotifier->AddNotifier(fPluginRef, fPluginName, kAIDocumentClosedNotifier, &m_documentClosedNotifier);
+	return error;
+}
+
+ASErr Ai2VltPlugin::PostStartupPlugin()
+{
+	ASErr error = kNoErr;
+	try {
+		// Create flash panel
+		if (m_panelController == nullptr)
+		{
+			m_panelController = std::make_unique<Ai2VltPanelController>(fPluginRef);
+			error = Plugin::LockPlugin(true);
+			if (error) return error;
+		}
+	}
+	catch (ai::Error ex) {
+		error = ex;
+	}
 	return error;
 }
 

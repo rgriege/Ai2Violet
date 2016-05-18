@@ -31,6 +31,7 @@ private:
 	virtual ASErr Message(char* caller, char* selector, void* message) override;
 	virtual ASErr Notify(AINotifierMessage* message) override;
 	virtual ASErr StartupPlugin(SPInterfaceMessage* message) override;
+	virtual ASErr PostStartupPlugin() override;
 	virtual ASErr ShutdownPlugin(SPInterfaceMessage* message) override;
 	virtual ASErr GoMenuItem(AIMenuMessage* message) override;
 	virtual ASErr GoFileFormat(AIFileFormatMessage* message) override;
