@@ -221,6 +221,10 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 		TextRangeRef textRange;
 		sAITextFrame->GetATETextRange(artHandle, &textRange);
 		ATE::ITextRange iTextRange(textRange);
+
+		ATE::ICharInspector charInspector = iTextRange.GetCharInspector();
+		const double fontSize = charInspector.GetFontSize().GetFirst();
+
 		AIRealRect bounds;
 		sATETextUtil->GetBoundsFromTextRange(textRange, &bounds);
 
@@ -246,7 +250,7 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 		default:
 			break;
 		}
-		sprintf(buf, "%.0f", bounds.top - origin.h);
+		sprintf(buf, "%.0f", bounds.bottom - fontSize - origin.h);
 		ezxml_set_attr_d(text, "y", buf);
 
 		ASInt32 strLength = iTextRange.GetSize();
@@ -262,8 +266,6 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 			}
 		}
 
-		ATE::ICharInspector charInspector = iTextRange.GetCharInspector();
-		const double fontSize = charInspector.GetFontSize().GetFirst();
 		sprintf(buf, "%.0f", fontSize);
 		ezxml_set_attr_d(text, "font-size", buf);
 
