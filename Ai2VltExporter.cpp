@@ -220,16 +220,35 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 
 		TextRangeRef textRange;
 		sAITextFrame->GetATETextRange(artHandle, &textRange);
-
+		ATE::ITextRange iTextRange(textRange);
 		AIRealRect bounds;
 		sATETextUtil->GetBoundsFromTextRange(textRange, &bounds);
-		sprintf(buf, "%.0f", bounds.left - origin.v);
-		ezxml_set_attr_d(text, "x", buf);
+
+		bool justificationAssigned;
+		ATE::ParagraphJustification justification = iTextRange.GetUniqueParaFeatures().GetJustification(&justificationAssigned);
+		if (!justificationAssigned)
+			justification = ATE::kLeftJustify;
+		switch (justification)
+		{
+		case ATE::kRightJustify:
+			ezxml_set_attr(text, "font-align", "right");
+			sprintf(buf, "%.0f", bounds.right - origin.v);
+			ezxml_set_attr_d(text, "x", buf);
+			break;
+		case ATE::kCenterJustify:
+			ezxml_set_attr(text, "font-align", "center");
+			sprintf(buf, "%.0f", bounds.left + (bounds.right - bounds.left) / 2.f - origin.v);
+			ezxml_set_attr_d(text, "x", buf);
+			break;
+		case ATE::kLeftJustify:
+			sprintf(buf, "%.0f", bounds.left - origin.v);
+			ezxml_set_attr_d(text, "x", buf);
+		default:
+			break;
+		}
 		sprintf(buf, "%.0f", bounds.top - origin.h);
 		ezxml_set_attr_d(text, "y", buf);
 
-
-		ATE::ITextRange iTextRange(textRange);
 		ASInt32 strLength = iTextRange.GetSize();
 		if (strLength > 0)
 		{
