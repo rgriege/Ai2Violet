@@ -4,63 +4,63 @@
 
 extern "C"
 {
-	AIUnicodeStringSuite*				sAIUnicodeString = NULL;
-	SPBlocksSuite*						sSPBlocks = NULL;
-	AIArtboardSuite*					sAIArtboard = NULL;
-	AIMenuSuite*						sAIMenu = NULL;
-	AIDataFilterSuite*					sAIDataFilter = NULL;
-	AIDocumentListSuite*				sAIDocumentList = NULL;
-	AIDocumentSuite*					sAIDocument = NULL;
 	AIArtSuite*							sAIArt = NULL;
-	AIDictionarySuite*					sAIDictionary = NULL;
+	AIArtboardSuite*					sAIArtboard = NULL;
 	AIArtSetSuite*						sAIArtSet = NULL;
-	AISymbolSuite*						sAISymbol = NULL;
-	AIRasterizeSuite*					sAIRasterize = NULL;
-	AILayerSuite*						sAILayer = NULL;
-	AIPathStyleSuite*					sAIPathStyle = NULL;
-	AIMatchingArtSuite*					sAIMatchingArt = NULL;
-	AITextFrameSuite*					sAITextFrame = NULL;
 	AIColorConversionSuite*				sAIColorConversion = NULL;
-	AIFontSuite*						sAIFont = NULL;
-	AIPathSuite*						sAIPath = NULL;
-	AIATETextUtilSuite*					sATETextUtil = NULL;
+	AIDataFilterSuite*					sAIDataFilter = NULL;
+	AIDictionarySuite*					sAIDictionary = NULL;
 	AIDictionaryIteratorSuite*			sAIDictionaryIterator = NULL;
+	AIDocumentSuite*					sAIDocument = NULL;
+	AIDocumentListSuite*				sAIDocumentList = NULL;
 	AIFileFormatSuite*					sAIFileFormat = NULL;
-	AIMdMemorySuite*					sAIMdMemory = NULL;
-	AIATEPaintSuite*					sATEPaint = NULL;
+	AIFontSuite*						sAIFont = NULL;
 	AIImageOptSuite*					sAIImageOpt = NULL;
+	AILayerSuite*						sAILayer = NULL;
+	AIMatchingArtSuite*					sAIMatchingArt = NULL;
+	AIMdMemorySuite*					sAIMdMemory = NULL;
+	AIMenuSuite*						sAIMenu = NULL;
+	AIPathSuite*						sAIPath = NULL;
+	AIPathStyleSuite*					sAIPathStyle = NULL;
+	AIRasterizeSuite*					sAIRasterize = NULL;
 	AIRealMathSuite*					sAIRealMath = NULL;
+	AISymbolSuite*						sAISymbol = NULL;
+	AITextFrameSuite*					sAITextFrame = NULL;
+	AIUnicodeStringSuite*				sAIUnicodeString = NULL;
+	AIATEPaintSuite*					sATEPaint = NULL;
+	AIATETextUtilSuite*					sATETextUtil = NULL;
+	SPBlocksSuite*						sSPBlocks = NULL;
 	EXTERN_TEXT_SUITES
 };
 
 ImportSuite gImportSuites[] = 
 {
-	kAIUnicodeStringSuite, kAIUnicodeStringSuiteVersion, &sAIUnicodeString,
-	kAIArtboardSuite, kAIArtboardSuiteVersion, &sAIArtboard,
-	kSPBlocksSuite, kSPBlocksSuiteVersion, &sSPBlocks,
-	kAIMenuSuite, kAIMenuSuiteVersion, &sAIMenu,
-	kAIDataFilterSuite, kAIDataFilterSuiteVersion, &sAIDataFilter,
-	kAIDocumentListSuite, kAIDocumentListSuiteVersion, &sAIDocumentList,
-	kAIDocumentSuite, kAIDocumentSuiteVersion, &sAIDocument,
 	kAIArtSuite, kAIArtSuiteVersion, &sAIArt,
-	kAIDictionarySuite, kAIDictionarySuiteVersion, &sAIDictionary,
+	kAIArtboardSuite, kAIArtboardSuiteVersion, &sAIArtboard,
 	kAIArtSetSuite, kAIArtSetSuiteVersion, &sAIArtSet,
-	kAISymbolSuite, kAISymbolSuiteVersion, &sAISymbol,
-	kAIRasterizeSuite, kAIRasterizeSuiteVersion, &sAIRasterize,
-	kAILayerSuite, kAILayerSuiteVersion, &sAILayer,
-	kAIPathStyleSuite, kAIPathStyleSuiteVersion, &sAIPathStyle,
-	kAIMatchingArtSuite, kAIMatchingArtSuiteVersion, &sAIMatchingArt,
-	kAITextFrameSuite, kAITextFrameSuiteVersion, &sAITextFrame,
 	kAIColorConversionSuite, kAIColorConversionSuiteVersion, &sAIColorConversion,
-	kAIFontSuite, kAIFontSuiteVersion, &sAIFont,
-	kAIPathSuite, kAIPathSuiteVersion, &sAIPath,
-	kAIATETextUtilSuite, kAIATETextUtilSuiteVersion, &sATETextUtil,
+	kAIDataFilterSuite, kAIDataFilterSuiteVersion, &sAIDataFilter,
+	kAIDictionarySuite, kAIDictionarySuiteVersion, &sAIDictionary,
 	kAIDictionaryIteratorSuite, kAIDictionaryIteratorSuiteVersion, &sAIDictionaryIterator,
+	kAIDocumentSuite, kAIDocumentSuiteVersion, &sAIDocument,
+	kAIDocumentListSuite, kAIDocumentListSuiteVersion, &sAIDocumentList,
 	kAIFileFormatSuite, kAIFileFormatSuiteVersion, &sAIFileFormat,
-	kAIMdMemorySuite, kAIMdMemorySuiteVersion, &sAIMdMemory,
-	kAIATEPaintSuite, kAIATEPaintSuiteVersion, &sATEPaint,
+	kAIFontSuite, kAIFontSuiteVersion, &sAIFont,
 	kAIImageOptSuite, kAIImageOptSuiteVersion, &sAIImageOpt,
+	kAILayerSuite, kAILayerSuiteVersion, &sAILayer,
+	kAIMatchingArtSuite, kAIMatchingArtSuiteVersion, &sAIMatchingArt,
+	kAIMdMemorySuite, kAIMdMemorySuiteVersion, &sAIMdMemory,
+	kAIMenuSuite, kAIMenuSuiteVersion, &sAIMenu,
+	kAIPathSuite, kAIPathSuiteVersion, &sAIPath,
+	kAIPathStyleSuite, kAIPathStyleSuiteVersion, &sAIPathStyle,
+	kAIRasterizeSuite, kAIRasterizeSuiteVersion, &sAIRasterize,
 	kAIRealMathSuite, kAIRealMathSuiteVersion, &sAIRealMath,
+	kAISymbolSuite, kAISymbolSuiteVersion, &sAISymbol,
+	kAITextFrameSuite, kAITextFrameSuiteVersion, &sAITextFrame,
+	kAIUnicodeStringSuite, kAIUnicodeStringSuiteVersion, &sAIUnicodeString,
+	kAIATEPaintSuite, kAIATEPaintSuiteVersion, &sATEPaint,
+	kAIATETextUtilSuite, kAIATETextUtilSuiteVersion, &sATETextUtil,
+	kSPBlocksSuite, kSPBlocksSuiteVersion, &sSPBlocks,
 
 	IMPORT_TEXT_SUITES
 	nil, 0, nil

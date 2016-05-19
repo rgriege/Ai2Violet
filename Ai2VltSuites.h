@@ -24,31 +24,31 @@
 #include "AISymbol.h"
 #include "AITextFrame.h"
 
-extern "C" AIUnicodeStringSuite*			sAIUnicodeString;
-extern "C" SPBlocksSuite*					sSPBlocks;
-extern "C" AIArtboardSuite*					sAIArtboard;
-extern "C" AIMenuSuite*						sAIMenu;
-extern "C" AIDataFilterSuite*				sAIDataFilter;
-extern "C" AIDocumentListSuite*				sAIDocumentList;
-extern "C" AIDocumentSuite*					sAIDocument;
 extern "C" AIArtSuite*						sAIArt;
-extern "C" AIDictionarySuite*				sAIDictionary;
+extern "C" AIArtboardSuite*					sAIArtboard;
 extern "C" AIArtSetSuite*					sAIArtSet;
-extern "C" AISymbolSuite*					sAISymbol;
-extern "C" AIRasterizeSuite*				sAIRasterize;
-extern "C" AILayerSuite*					sAILayer;
-extern "C" AIPathStyleSuite*				sAIPathStyle;
-extern "C" AIMatchingArtSuite*				sAIMatchingArt;
-extern "C" AITextFrameSuite*				sAITextFrame;
 extern "C" AIColorConversionSuite*			sAIColorConversion;
-extern "C" AIFontSuite*						sAIFont;
-extern "C" AIPathSuite*						sAIPath;
-extern "C" AIATETextUtilSuite*				sATETextUtil;
+extern "C" AIDataFilterSuite*				sAIDataFilter;
+extern "C" AIDictionarySuite*				sAIDictionary;
 extern "C" AIDictionaryIteratorSuite*		sAIDictionaryIterator;
+extern "C" AIDocumentSuite*					sAIDocument;
+extern "C" AIDocumentListSuite*				sAIDocumentList;
 extern "C" AIFileFormatSuite*				sAIFileFormat;
-extern "C" AIMdMemorySuite*					sAIMdMemory;
-extern "C" AIATEPaintSuite*					sATEPaint;
+extern "C" AIFontSuite*						sAIFont;
 extern "C" AIImageOptSuite*					sAIImageOpt;
+extern "C" AILayerSuite*					sAILayer;
+extern "C" AIMatchingArtSuite*				sAIMatchingArt;
+extern "C" AIMdMemorySuite*					sAIMdMemory;
+extern "C" AIMenuSuite*						sAIMenu;
+extern "C" AIPathSuite*						sAIPath;
+extern "C" AIPathStyleSuite*				sAIPathStyle;
+extern "C" AIRasterizeSuite*				sAIRasterize;
 extern "C" AIRealMathSuite*					sAIRealMath;
+extern "C" AISymbolSuite*					sAISymbol;
+extern "C" AITextFrameSuite*				sAITextFrame;
+extern "C" AIUnicodeStringSuite*			sAIUnicodeString;
+extern "C" AIATEPaintSuite*					sATEPaint;
+extern "C" AIATETextUtilSuite*				sATETextUtil;
+extern "C" SPBlocksSuite*					sSPBlocks;
 
 #endif
