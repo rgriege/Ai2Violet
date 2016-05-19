@@ -118,12 +118,12 @@ static void exportPNG(AIArtHandle art, const ai::FilePath & name)
 		CHECK(sAIArt->GetArtBounds(art, &bounds));
 		gatherArt(set, art, bounds);
 
-		AIRasterizeSettings settings{ kRasterizeARGB, 300, 0, kRasterizeOptionsNone, AIColorConvertOptions{}, false };
+		AIRasterizeSettings settings{ kRasterizeARGB, 288, 2, kRasterizeOptionsNone, AIColorConvertOptions{}, false };
 		CHECK(sAIRasterize->Rasterize(set, &settings, &bounds, kPlaceAboveAll, nullptr, &raster, nullptr));
 
 		CHECK(sAIDataFilter->NewFileDataFilter(name, "write", 0, 0, &filter));
 		CHECK(sAIDataFilter->LinkDataFilter(NULL, filter));
-		AIImageOptPNGParams params{ false, 255, 254, 300, true, bounds.right - bounds.left, bounds.top - bounds.bottom };
+		AIImageOptPNGParams params{ false, 255, 254, 72, true, bounds.right - bounds.left, bounds.top - bounds.bottom };
 		CHECK(sAIImageOpt->AsPNG(raster, filter, params));
 
 		// TODO(rgriege): delete me
