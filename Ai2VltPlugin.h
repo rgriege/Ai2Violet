@@ -4,14 +4,12 @@
 #include "IllustratorSDK.h"
 #include "Plugin.hpp"
 #include "Ai2VltSuites.h"
-#include "Ai2VltPanelController.h"
 #include "SDKDef.h"
 #include "SDKAboutPluginsHelper.h"
 
 Plugin* AllocatePlugin(SPPluginRef pluginRef);
 void FixupReload(Plugin* plugin);
 
-// TODO(rgriege): why is this necessary?
 class Ai2VltPanelController;
 
 class Ai2VltPlugin final : public Plugin

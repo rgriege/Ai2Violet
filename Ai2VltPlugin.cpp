@@ -1,5 +1,6 @@
 #include "IllustratorSDK.h"
 #include "Ai2VltExporter.h"
+#include "Ai2VltPanelController.h"
 #include "Ai2VltPlugin.h"
 #include "AICSXS.h"
 

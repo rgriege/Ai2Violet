@@ -126,10 +126,6 @@ static void exportPNG(AIArtHandle art, const ai::FilePath & name)
 		AIImageOptPNGParams params{ false, 255, 254, 72, true, bounds.right - bounds.left, bounds.top - bounds.bottom };
 		CHECK(sAIImageOpt->AsPNG(raster, filter, params));
 
-		// TODO(rgriege): delete me
-		const std::string & n = name.GetFullPath(true).as_Platform();
-		printf(n.c_str());
-
 		sAIArt->DisposeArt(raster);
 		sAIArtSet->DisposeArtSet(&set);
 		sAIDataFilter->UnlinkDataFilter(filter, nullptr);
@@ -546,7 +542,6 @@ static void exportDocument(ezxml_t doc, const char * filename)
 			CHECK(sAISymbol->GetNthSymbolPattern(i, &symbolHandle, false));
 			if (sAISymbol->ArtUsesSymbolPattern(NULL, kSymbolSearchEverywhere, symbolHandle, NULL, NULL, NULL, NULL))
 			{
-				// TODO(rgriege): remove me
 				ai::UnicodeString symbolName;
 				CHECK(sAISymbol->GetSymbolPatternName(symbolHandle, symbolName));
 				ezxml_t symbol = ezxml_add_child(doc, "symbol", i);
@@ -573,7 +568,6 @@ static void exportDocument(ezxml_t doc, const char * filename)
 			sAILayer->GetLayerVisible(layerHandle, &visible);
 			if (visible)
 			{
-				// TODO(rgriege): remove me
 				ai::UnicodeString layerName;
 				sAILayer->GetLayerTitle(layerHandle, layerName);
 				ezxml_t layer = ezxml_add_child(doc, "g", symbolCount + i);
