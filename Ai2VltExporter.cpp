@@ -6,6 +6,8 @@
 #include "Utility.h"
 #include "ezxml/ezxml.h"
 
+typedef std::vector<std::pair<AIArtHandle, ai::FilePath>> Images;
+
 #undef strcpy
 
 static void addHookData(ezxml_t node, AIArtHandle art)
@@ -104,7 +106,7 @@ static void gatherArt(AIArtSet set, AIArtHandle art, AIRealRect & setBounds)
 	}
 }
 
-static void exportImage(AIArtHandle art, const ai::FilePath & name)
+static void exportPNG(AIArtHandle art, const ai::FilePath & name)
 {
 	AIArtSet set = nullptr;
 	AIArtHandle raster = nullptr;
@@ -141,6 +143,43 @@ static void exportImage(AIArtHandle art, const ai::FilePath & name)
 		if (filter)
 			sAIDataFilter->UnlinkDataFilter(filter, nullptr);
 
+		ex.report();
+		throw;
+	}
+}
+
+static void exportImage(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol, AIRealPoint origin, const ai::FilePath & file)
+{
+	try
+	{
+		ezxml_t child = ezxml_add_child(node, "img", n);
+		AIPathSegment segment;
+		AIRealRect artBounds;
+		CHECK(sAIArt->GetArtBounds(artHandle, &artBounds));
+		char buf[32];
+		if (!insideSymbol)
+		{
+			sprintf(buf, "%.0f", artBounds.left - origin.h);
+			ezxml_set_attr_d(child, "x", buf);
+			sprintf(buf, "%.0f", artBounds.bottom - origin.v);
+			ezxml_set_attr_d(child, "y", buf);
+		}
+		else
+		{
+			AIRealRect maxBounds;
+			CHECK(sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds));
+			sprintf(buf, "%.0f", artBounds.left - maxBounds.left - origin.h);
+			ezxml_set_attr_d(child, "x", buf);
+			sprintf(buf, "%.0f", artBounds.bottom - maxBounds.top - origin.v);
+			ezxml_set_attr_d(child, "y", buf);
+		}
+
+		ezxml_set_attr_d(child, "src", file.GetFileName(true).as_Platform().c_str());
+
+		exportPNG(artHandle, file);
+	}
+	catch (Ai2Vlt::Error & ex)
+	{
 		ex.report();
 		throw;
 	}
@@ -366,7 +405,7 @@ static void exportText(ezxml_t node, AIArtHandle artHandle, size_t n, bool insid
 	}
 }
 
-static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol, AIRealPoint origin, std::vector<AIArtHandle> & images)
+static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool insideSymbol, AIRealPoint origin, const ai::UnicodeString & dir)
 {
 	try
 	{
@@ -384,7 +423,10 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 			CHECK(sAIArt->GetArtName(artHandle, name, &isDefaultName));
 			if (!isDefaultName && name.find(ai::UnicodeString("img:")) == 0)
 			{
-				images.emplace_back(artHandle);
+				ai::FilePath filePath{ dir };
+				filePath.AddComponent(name.substr(4));
+				filePath.AddExtension(".png");
+				exportImage(node, artHandle, n, insideSymbol, origin, filePath);
 			}
 			else
 			{
@@ -393,7 +435,7 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 				size_t childIdx = 0;
 				while (childHandle)
 				{
-					exportArt(node, childHandle, childIdx++, insideSymbol, origin, images);
+					exportArt(node, childHandle, childIdx++, insideSymbol, origin, dir);
 					CHECK(sAIArt->GetArtSibling(childHandle, &childHandle));
 				}
 			}
@@ -476,7 +518,7 @@ static void exportDocument(ezxml_t doc, const char * filename)
 	AILayerHandle tempLayer = nullptr;
 	try
 	{
-		std::vector<AIArtHandle> images;
+		const ai::UnicodeString dir = ai::FilePath{ ai::UnicodeString(filename) }.GetDirectory();
 
 		ai::ArtboardList artboards;
 		CHECK(sAIArtboard->GetArtboardList(artboards));
@@ -493,6 +535,8 @@ static void exportDocument(ezxml_t doc, const char * filename)
 				(int)bounds.top);
 			ezxml_set_attr_d(doc, "viewBox", buf);
 		}
+
+		sAILayer->InsertLayer(nullptr, kPlaceAboveAll, &tempLayer);
 
 		ai::int32 symbolCount;
 		CHECK(sAISymbol->CountSymbolPatterns(&symbolCount, false));
@@ -515,7 +559,7 @@ static void exportDocument(ezxml_t doc, const char * filename)
 				CHECK(sAIArt->GetArtBounds(artHandle, &artBounds));
 				CHECK(sAIDocument->GetDocumentMaxArtboardBounds(&maxBounds));
 
-				exportArt(symbol, artHandle, 0, true, AIRealPoint{ artBounds.left - maxBounds.left, artBounds.bottom - maxBounds.top }, images);
+				exportArt(symbol, artHandle, 0, true, AIRealPoint{ artBounds.left - maxBounds.left, artBounds.bottom - maxBounds.top }, dir);
 			}
 		}
 
@@ -537,23 +581,10 @@ static void exportDocument(ezxml_t doc, const char * filename)
 
 				AIArtHandle artHandle;
 				sAIArt->GetFirstArtOfLayer(layerHandle, &artHandle);
-				exportArt(layer, artHandle, 0, false, AIRealPoint{ 0, 0 }, images);
+				exportArt(layer, artHandle, 0, false, AIRealPoint{ 0, 0 }, dir);
 			}
 		}
 
-		const ai::UnicodeString dir = ai::FilePath{ ai::UnicodeString(filename) }.GetDirectory();
-		sAILayer->InsertLayer(nullptr, kPlaceAboveAll, &tempLayer);
-		for (AIArtHandle art : images)
-		{
-			AIBoolean isDefaultName;
-			ai::UnicodeString name;
-			sAIArt->GetArtName(art, name, &isDefaultName);
-
-			ai::FilePath filePath{ dir };
-			filePath.AddComponent(name.substr(4));
-			filePath.AddExtension(".png");
-			exportImage(art, filePath);
-		}
 		sAILayer->DeleteLayer(tempLayer);
 	}
 	catch (Ai2Vlt::Error & ex)
