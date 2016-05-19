@@ -473,6 +473,7 @@ static void exportArt(ezxml_t node, AIArtHandle artHandle, size_t n, bool inside
 
 static void exportDocument(ezxml_t doc, const char * filename)
 {
+	AILayerHandle tempLayer = nullptr;
 	try
 	{
 		std::vector<AIArtHandle> images;
@@ -541,6 +542,7 @@ static void exportDocument(ezxml_t doc, const char * filename)
 		}
 
 		const ai::UnicodeString dir = ai::FilePath{ ai::UnicodeString(filename) }.GetDirectory();
+		sAILayer->InsertLayer(nullptr, kPlaceAboveAll, &tempLayer);
 		for (AIArtHandle art : images)
 		{
 			AIBoolean isDefaultName;
@@ -552,9 +554,12 @@ static void exportDocument(ezxml_t doc, const char * filename)
 			filePath.AddExtension(".png");
 			exportImage(art, filePath);
 		}
+		sAILayer->DeleteLayer(tempLayer);
 	}
 	catch (Ai2Vlt::Error & ex)
 	{
+		if (tempLayer)
+			sAILayer->DeleteLayer(tempLayer);
 		ex.report();
 		throw;
 	}
