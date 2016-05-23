@@ -44,7 +44,7 @@ namespace Ai2Vlt
 
 #else
 
-#define CHECK(call) check_ai_error("", call)
+#define CHECK(call) Ai2Vlt::check_ai_error("", call)
 #define CHECK_EXCEPT(call, er) Ai2Vlt::check_ai_error_except("", call, er)
 
 #endif
